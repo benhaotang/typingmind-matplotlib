@@ -62,9 +62,7 @@ function render_matplotlib_plot(params) {
     }
   
     // Run dedented Python code
-    pyodide.runPython(\`
-${pythonCode}
-    \`);
+    pyodide.runPython(\`${pythonCode}\`);
   }
   main();
   </script>
