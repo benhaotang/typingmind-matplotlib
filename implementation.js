@@ -33,10 +33,7 @@ async function main() {
   }
 
   // Run matplotlib code
-  pyodide.runPython(\`
-import matplotlib
-matplotlib.use('module://matplotlib_pyodide.html5_canvas_backend')
-${matplotlib_code}
+  pyodide.runPython(\`import matplotlib\nmatplotlib.use('module://matplotlib_pyodide.html5_canvas_backend')\n${matplotlib_code}
   \`);
 }
 main();
