@@ -24,10 +24,37 @@ function render_matplotlib_plot(params) {
   
     // Start constructing the HTML string
     let htmlString = `
-  <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
   <script>
   async function main() {
-    let pyodide = await loadPyodide();
+    async function _loadScript(url) {
+    if (!window.loadedScripts) {
+      window.loadedScripts = {};
+    }
+
+    if (window.loadedScripts[url]) {
+      return;
+    }
+
+    return new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = url;
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    }).then(() => (window.loadedScripts[url] = true));
+  }
+
+  // Load Pyodide if it's not already loaded
+  await _loadScript("https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js");
+
+  // Initialize Pyodide
+  let pyodide;
+  if (!window.pyodide) {
+    pyodide = await loadPyodide();
+    window.pyodide = pyodide; // Cache it globally for future use
+  } else {
+    pyodide = window.pyodide;
+  }
   
     // Print Python version for debugging
     console.log(
