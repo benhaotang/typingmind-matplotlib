@@ -14,7 +14,7 @@ function render_matplotlib_plot(params) {
     // Function to trim the leading whitespace of the first three lines only
     function trimFirstThreeLines(code) {
       const lines = code.split('\n');
-      for (let i = 0; i < Math.min(3, lines.length); i++) {
+      for (let i = 0; i < Math.min(4, lines.length); i++) {
         lines[i] = lines[i].trimStart();
       }
       return lines.join('\n');
