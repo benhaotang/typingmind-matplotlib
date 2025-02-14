@@ -4,34 +4,23 @@ function render_matplotlib_plot(params) {
     // Ensure packages is an array even if empty or undefined
     const pkgs = Array.isArray(packages) && packages.length > 0 ? packages : [];
   
-    // A helper function to remove common leading whitespace
-    function dedent(str) {
-      const lines = str.split('\n');
-      // Find the minimum indentation of all non-empty lines
-      let minIndent = Infinity;
-      for (const line of lines) {
-        const trimmed = line.trim();
-        if (trimmed) {
-          const match = line.match(/^(\s+)/);
-          if (match) {
-            minIndent = Math.min(minIndent, match[1].length);
-          } else {
-            minIndent = 0;
-          }
-        }
+    // Construct the raw Python code as a string
+    const rawPythonCode = `
+        import matplotlib
+        matplotlib.use('module://matplotlib_pyodide.html5_canvas_backend')
+        ${matplotlib_code}
+    `;
+  
+    // Function to trim the leading whitespace of the first three lines only
+    function trimFirstThreeLines(code) {
+      const lines = code.split('\n');
+      for (let i = 0; i < Math.min(3, lines.length); i++) {
+        lines[i] = lines[i].trimStart();
       }
-      if (minIndent === Infinity) minIndent = 0;
-      // Remove that amount of whitespace from the beginning of each line
-      return lines.map(line => line.startsWith(' '.repeat(minIndent)) ? line.slice(minIndent) : line).join('\n');
+      return lines.join('\n');
     }
   
-    // Construct the Python code by concatenating the static header with the matplotlib_code
-    const rawPythonCode = `
-      import matplotlib
-      matplotlib.use('module://matplotlib_pyodide.html5_canvas_backend')
-      ${matplotlib_code}
-    `;
-    const pythonCode = dedent(rawPythonCode);
+    const pythonCode = trimFirstThreeLines(rawPythonCode);
   
     // Start constructing the HTML string
     let htmlString = `
@@ -61,8 +50,10 @@ function render_matplotlib_plot(params) {
       }
     }
   
-    // Run dedented Python code
-    pyodide.runPython(\`${pythonCode}\`);
+    // Run the Python code with the first three lines trimmed
+    pyodide.runPython(\`
+${pythonCode}
+    \`);
   }
   main();
   </script>
