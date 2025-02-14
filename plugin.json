@@ -1,0 +1,40 @@
+{
+    "uuid": "da48bf3e-f542-41b3-9328-076befb1fab6",
+    "id": "render_matplotlib_plot",
+    "version": 1,
+    "emoji": "🧩",
+    "title": "Matplotlib Plot",
+    "overviewMarkdown": "## Matplotlib Plot\n\nThis plugin allows you to render plots using Matplotlib by executing Python code in real-time. Matplotlib is already loaded, and you can specify additional packages if needed.",
+    "openaiSpec": {
+        "name": "render_matplotlib_plot",
+        "parameters": {
+            "type": "object",
+            "required": [
+                "title",
+                "matplotlib_code"
+            ],
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "description": "The title of the Matplotlib plot to display above the plot."
+                },
+                "matplotlib_code": {
+                    "type": "string",
+                    "description": "The Python code to generate the plot using Matplotlib. Note that Matplotlib is already loaded in this environment."
+                },
+                "packages": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of additional Python packages to load before executing the code. Only include packages that are necessary for your calculation."
+                }
+            }
+        },
+        "description": "Render Matplotlib plots using Python code executed in a Pyodide environment."
+    },
+    "userSettings": null,
+    "iconURL": "https://matplotlib.org/_static/images/documentation.svg",
+    "implementationType": "javascript",
+    "outputType": "render_html"
+}
