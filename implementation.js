@@ -51,9 +51,7 @@ function render_matplotlib_plot(params) {
     }
   
     // Run the Python code with the first three lines trimmed
-    pyodide.runPython(\`
-${pythonCode}
-    \`);
+    pyodide.runPython(\`${pythonCode}\`);
   }
   main();
   </script>
