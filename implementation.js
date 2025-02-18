@@ -24,8 +24,43 @@ function render_matplotlib_plot(params) {
   
     // Start constructing the HTML string
     let htmlString = `
+  <div id="plot-container">
+      <div
+          id="loading-animation"
+          style="
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              align-items: center;
+              height: 200px;
+          "
+      >
+          <div class="spinner"></div>
+          <p id="loading-caption" style="margin-top: 10px">Loading Pyodide...</p>
+      </div>
+      <div id="plot-output" style="display: none"></div>
+  </div>
+  <style>
+      .spinner {
+          border: 5px solid #f3f3f3;
+          border-top: 5px solid #3498db;
+          border-radius: 50%;
+          width: 50px;
+          height: 50px;
+          animation: spin 2s linear infinite;
+      }
+      @keyframes spin {
+          0% {
+              transform: rotate(0deg);
+          }
+          100% {
+              transform: rotate(360deg);
+          }
+      }
+  </style>
   <script>
   async function main() {
+    const loadingCaption=document.getElementById("loading-caption");
     async function _loadScript(url) {
     if (!window.loadedScripts) {
       window.loadedScripts = {};
@@ -48,6 +83,7 @@ function render_matplotlib_plot(params) {
   await _loadScript("https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js");
 
   // Initialize Pyodide
+  loadingCaption.innerText="Initializing Pyodide...";
   let pyodide;
   if (!window.pyodide) {
     pyodide = await loadPyodide();
@@ -65,20 +101,35 @@ function render_matplotlib_plot(params) {
     );
   
     // Load matplotlib package
+    loadingCaption.innerText="Loading Matplotlib...";
     await pyodide.loadPackage("matplotlib");
   
     // Set packages variable (an empty array if none provided)
     const packages = ${JSON.stringify(pkgs)};
-  
     // Load additional packages if provided
     if (packages.length > 0) {
-      for (const packageName of packages) {
-        await pyodide.loadPackage(packageName);
-      }
+      loadingCaption.innerText="Loading additional packages...";
+      await Promise.all(packages.map(packageName=>pyodide.loadPackage(packageName))).then(()=>{
+      loadingCaption.innerText="Running Python code...";
+      });
     }
-  
-    // Run the Python code with the first three lines trimmed
-    pyodide.runPython(\`${pythonCode}\`);
+    else
+    {
+      loadingCaption.innerText="Running Python code...";
+    }
+      // Run the Python code with the first three lines trimmed
+    try{
+      await pyodide.runPython(\`${pythonCode}\`);
+    }
+    catch(error){
+      console.error("Error running Python code:",error);
+      document.getElementById("loading-animation").style.display="none";
+      document.getElementById("plot-output").innerText="Error generating plot. See console for details.";
+      document.getElementById("plot-output").style.display="block";
+      return;
+    }
+    document.getElementById("loading-animation").style.display="none";
+    document.getElementById("plot-output").style.display="block";
   }
   main();
   </script>
