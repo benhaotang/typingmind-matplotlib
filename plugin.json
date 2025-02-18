@@ -1,7 +1,7 @@
 {
     "uuid": "da48bf3e-f542-41b3-9328-076befb1fab6",
     "id": "render_matplotlib_plot",
-    "version": 2,
+    "version": 3,
     "emoji": "🧩",
     "title": "Matplotlib Plot",
     "overviewMarkdown": "## Matplotlib Plot\n\nThis plugin allows you to render plots using Matplotlib by executing Python code in real-time. Matplotlib is already loaded, and you can specify additional packages if needed.",
@@ -20,7 +20,7 @@
                 },
                 "matplotlib_code": {
                     "type": "string",
-                    "description": "The Python code to generate the plot using Matplotlib. Note that Matplotlib is already loaded in this environment."
+                    "description": "The Python code to generate the plot using Matplotlib. Note that Matplotlib is already loaded in this environment. And plt.show() is required in the end."
                 },
                 "packages": {
                     "type": "array",
